@@ -1,0 +1,34 @@
+# === Core CLI & UI ===
+rich==13.9.2
+
+# === Speech & Voice ===
+SpeechRecognition==3.10.0
+gTTS==2.5.4
+python-vlc==3.0.20123
+
+# === Audio Input (Microphone) ===
+PyAudio==0.2.14
+
+# === PDF Tools ===
+PyPDF2==3.0.1
+
+# === Word & Document Handling ===
+python-docx==1.1.2
+docxcompose==1.4.0
+docx2pdf==0.1.8
+
+# === Image Handling ===
+Pillow==10.4.0
+
+# === Email Automation ===
+secure-smtplib==0.1.1
+
+# === File Management ===
+send2trash==1.8.3
+
+# === Optional (Text-to-Speech Offline fallback) ===
+pyttsx3==2.90
+
+# === Optional (if you want better offline voices) ===
+espeakng==1.0.3  # optional: use if you installed espeak-ng system-wide
+festival==0.9.1   # optional: only for Linux with festival backend
