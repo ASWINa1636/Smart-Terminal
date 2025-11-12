@@ -51,3 +51,50 @@ Built completely in Python 🐍, this tool lets you perform real-world productiv
 ```bash
 git clone https://github.com/ASWINa1636/Smart-Terminal.git
 cd Smart-Terminal
+
+### 2️⃣ Create a virtual environment (recommended)
+python3 -m venv venv
+source venv/bin/activate
+
+3️⃣ Install dependencies
+pip install -r requirements.txt
+
+4️⃣ Run the assistant
+python3 main.py
+
+🎙️ Voice Assistant Mode (Ubuntu)
+
+Then simply say:
+
+“Merge PDF”
+“Convert Word to PDF”
+“Exit”
+
+🧩 Package Structure
+smart_terminal/
+│
+├── main.py                     # CLI entry point
+├── modules/
+│   ├── pdf_tools.py
+│   ├── file_organizer.py
+│   ├── email_report.py
+│   ├── voice_assistant.py
+│   └── __init__.py
+│
+├── requirements.txt
+└── README.md
+
+
+🤝 Contributing
+
+Pull requests are welcome!
+If you’d like to contribute new features (like OCR, file compression, or email templates), fork the repo and submit a PR.
+
+📜 License
+
+This project is licensed under the MIT License
+
+⭐ Support
+
+If you like this project, give it a ⭐ on GitHub!
+Your star helps motivate development of more open-source automation tools ❤️
