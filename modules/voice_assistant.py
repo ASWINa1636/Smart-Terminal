@@ -1,13 +1,3 @@
-"""
-🎙️ Smart Terminal Voice Assistant
----------------------------------
-Voice control for your Smart Terminal Automation project.
-Uses Google TTS (soft, natural voice) and Speech Recognition.
-"""
-
-# ==========================================================
-# 🔇 System-Level Noise Suppression (before audio imports)
-# ==========================================================
 import os, sys, warnings
 try:
     devnull_fd = os.open(os.devnull, os.O_WRONLY)
@@ -19,9 +9,7 @@ os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 os.environ["AUDIODEV"] = "null"
 warnings.filterwarnings("ignore")
 
-# ==========================================================
-# 🎧 Imports
-# ==========================================================
+
 import speech_recognition as sr
 from gtts import gTTS
 import tempfile, time
@@ -34,12 +22,9 @@ from modules import pdf_tools
 
 console = Console()
 
-# ==========================================================
-# 🗣️ Speak Function (Google TTS + VLC)
-# ==========================================================
+
 def speak(text: str):
-    """Speak text using Google TTS + VLC (soft, natural voice)."""
-    console.print(f"[bold cyan]🤖 {text}[/bold cyan]")
+    console.print(f"[bold cyan]{text}[/bold cyan]")
     try:
         tts = gTTS(text=text, lang='en', slow=False)
         with tempfile.NamedTemporaryFile(delete=True, suffix=".mp3") as tmp:
@@ -51,19 +36,15 @@ def speak(text: str):
                 while player.is_playing():
                     time.sleep(0.1)
             else:
-                console.print("[yellow]⚠️ VLC not found — skipping audio output.[/yellow]")
+                console.print("[yellow]VLC not found — skipping audio output.[/yellow]")
     except Exception as e:
         console.print(f"[red]TTS error:[/red] {e}")
 
-# ==========================================================
-# 🎙️ Listen Function
-# ==========================================================
 def listen():
-    """Listen for user's speech and convert to text."""
     try:
         recognizer = sr.Recognizer()
         with sr.Microphone() as source:
-            console.print("[dim]🎙️ Listening...[/dim]")
+            console.print("[dim]Listening...[/dim]")
             recognizer.adjust_for_ambient_noise(source, duration=0.5)
             audio = recognizer.listen(source)
 
@@ -78,11 +59,7 @@ def listen():
         speak("Microphone is unavailable.")
         return ""
 
-# ==========================================================
-# 🧠 Core Voice Assistant Logic
-# ==========================================================
 def start_voice_assistant():
-    """Start voice-controlled assistant loop."""
     speak("Hello, I’m your Smart Terminal Voice Assistant!")
     speak("You can say commands like merge PDFs, split PDF, or exit to quit.")
 
