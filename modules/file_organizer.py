@@ -7,26 +7,20 @@ from rich.prompt import Prompt
 
 console = Console()
 
-# ------------------------------------------------------------
-# 🔹 Helper: make a safe directory
-# ------------------------------------------------------------
 def make_dir(base: Path, name: str) -> Path:
     path = base / name
     path.mkdir(parents=True, exist_ok=True)
     return path
 
 
-# ------------------------------------------------------------
-# 🧾 Helper: choose files interactively
-# ------------------------------------------------------------
 def choose_files(folder: Path):
     """Display files and let the user select one or more by index."""
     files = [f for f in folder.iterdir() if f.is_file()]
     if not files:
-        console.print("[yellow]⚠️ No files found in this folder.[/yellow]")
+        console.print("[yellow]No files found in this folder.[/yellow]")
         return []
 
-    console.print("\n📂 Files in folder:")
+    console.print("\nFiles in folder:")
     for i, f in enumerate(files, start=1):
         console.print(f"{i}. {f.name}")
 
@@ -47,21 +41,18 @@ def choose_files(folder: Path):
                 idx = int(p)
                 selected.append(files[idx - 1])
     except Exception:
-        console.print("[red]⚠️ Invalid input, selecting all files instead.[/red]")
+        console.print("[red]Invalid input, selecting all files instead.[/red]")
         selected = files
 
     return selected
 
 
-# ------------------------------------------------------------
-# 🗂 Sort selected files by type
-# ------------------------------------------------------------
 def sort_by_type(folder: Path):
     selected_files = choose_files(folder)
     if not selected_files:
         return
 
-    console.print(f"\n🗂 [bold cyan]Sorting selected files by type...[/bold cyan]")
+    console.print(f"\n[bold cyan]Sorting selected files by type...[/bold cyan]")
     moved = 0
     for file in selected_files:
         ext = file.suffix.lower().strip(".") or "others"
@@ -70,18 +61,14 @@ def sort_by_type(folder: Path):
         moved += 1
         console.print(f"✅ Moved {file.name} → {dest_dir.name}/")
 
-    console.print(f"\n🎉 Done! Moved [bold]{moved}[/bold] files.\n")
+    console.print(f"\nDone! Moved [bold]{moved}[/bold] files.\n")
 
-
-# ------------------------------------------------------------
-# 📅 Sort selected files by date
-# ------------------------------------------------------------
 def sort_by_date(folder: Path):
     selected_files = choose_files(folder)
     if not selected_files:
         return
 
-    console.print(f"\n📅 [bold cyan]Sorting selected files by modified date...[/bold cyan]")
+    console.print(f"\n[bold cyan]Sorting selected files by modified date...[/bold cyan]")
     moved = 0
     for file in selected_files:
         mtime = datetime.fromtimestamp(file.stat().st_mtime)
@@ -91,16 +78,13 @@ def sort_by_date(folder: Path):
         moved += 1
         console.print(f"✅ Moved {file.name} → {subfolder}/")
 
-    console.print(f"\n🎉 Done! Moved [bold]{moved}[/bold] files.\n")
+    console.print(f"\nDone! Moved [bold]{moved}[/bold] files.\n")
 
 
-# ------------------------------------------------------------
-# 📁 File Organizer Menu
-# ------------------------------------------------------------
 def organizer_menu():
     while True:
         console.print("""
-🗂 [bold cyan]File Organizer Tools[/bold cyan]
+[bold cyan]File Organizer Tools[/bold cyan]
 1. Sort selected files by type
 2. Sort selected files by date
 3. Back to Main Menu
@@ -110,7 +94,7 @@ def organizer_menu():
         if choice in ["1", "2"]:
             folder = Path(Prompt.ask("Enter folder path", default=".")).resolve()
             if not folder.exists():
-                console.print("[red]❌ Folder not found.[/red]")
+                console.print("[red]Folder not found.[/red]")
                 continue
 
             if choice == "1":
