@@ -1,15 +1,3 @@
-"""
-📄 Smart Terminal Assistant - PDF & Word Tools (Final with .doc Support)
------------------------------------------------------------------------
-Features:
- - Smart path input (folder or file)
- - Auto .doc → .docx conversion (LibreOffice/MS Word)
- - PDF + Word + Image utilities
- - Unlock & Protect PDF
- - Multi-file support
- - Unified error-safe experience
-"""
-
 from pathlib import Path
 from PyPDF2 import PdfReader, PdfWriter
 from docx import Document
@@ -23,14 +11,10 @@ import platform
 
 console = Console()
 
-# ------------------------------------------------------------
-# 🔹 Helper: Convert .doc → .docx
-# ------------------------------------------------------------
 def convert_doc_to_docx(file_path: Path):
-    """Convert old .doc to .docx using LibreOffice (Linux) or MS Word (Windows)."""
-    console.print(f"📄 Converting old Word file: {file_path.name}")
+    console.print(f"Converting old Word file: {file_path.name}")
     if not file_path.exists() or file_path.suffix.lower() != ".doc":
-        console.print("[red]❌ Not a .doc file[/red]")
+        console.print("[red]Not a .doc file[/red]")
         return None
 
     out_path = file_path.with_suffix(".docx")
@@ -40,7 +24,7 @@ def convert_doc_to_docx(file_path: Path):
             import win32com.client
             word = win32com.client.Dispatch("Word.Application")
             doc = word.Documents.Open(str(file_path))
-            doc.SaveAs(str(out_path), FileFormat=16)  # 16 = docx
+            doc.SaveAs(str(out_path), FileFormat=16)  
             doc.Close()
             word.Quit()
         else:
@@ -51,24 +35,20 @@ def convert_doc_to_docx(file_path: Path):
         console.print(f"✅ Converted to [green]{out_path.name}[/green]")
         return out_path
     except Exception as e:
-        console.print(f"[red]⚠️ Failed to convert {file_path.name}: {e}[/red]")
+        console.print(f"[red]Failed to convert {file_path.name}: {e}[/red]")
         return None
 
 
-# ------------------------------------------------------------
-# 🔹 Helper: Smart File Selector
-# ------------------------------------------------------------
 def select_file_from_folder(path: Path, file_types: list[str], description="file"):
-    """Let user enter a folder or file and choose one or multiple interactively."""
     path = path.resolve()
     if path.is_file():
         return [path]
     elif path.is_dir():
         files = [f for f in path.iterdir() if f.suffix.lower() in file_types]
         if not files:
-            console.print(f"[yellow]⚠️ No {description}s found in this folder.[/yellow]")
+            console.print(f"[yellow]No {description}s found in this folder.[/yellow]")
             return []
-        console.print(f"\n📂 [bold cyan]Select {description}(s) to process:[/bold cyan]")
+        console.print(f"\n[bold cyan]Select {description}(s) to process:[/bold cyan]")
         for i, f in enumerate(files, start=1):
             console.print(f"{i}. {f.name}")
         console.print("\n[dim]Example: 1,3,5 or 2-6 or all[/dim]")
@@ -87,36 +67,30 @@ def select_file_from_folder(path: Path, file_types: list[str], description="file
                     idx = int(p)
                     selected.append(files[idx - 1])
         except Exception:
-            console.print("[red]⚠️ Invalid input, selecting first file instead.[/red]")
+            console.print("[red]Invalid input, selecting first file instead.[/red]")
             selected = [files[0]]
         return selected
     else:
-        console.print(f"[red]❌ Invalid path[/red]")
+        console.print(f"[red]Invalid path[/red]")
         return []
 
 
-# ------------------------------------------------------------
-# 📄 Merge PDFs
-# ------------------------------------------------------------
 def merge_pdfs():
-    console.print("\n📄 [bold cyan]Merge PDFs[/bold cyan]")
+    console.print("\n[bold cyan]Merge PDFs[/bold cyan]")
     folder_input = Prompt.ask("Enter folder containing PDFs", default=".")
     folder = Path(folder_input).expanduser().resolve()
 
-    # ✅ Check folder existence
     if not folder.exists() or not folder.is_dir():
-        console.print(f"[red]❌ Folder not found:[/red] {folder}")
-        console.print("[yellow]💡 Tip: Check the folder name and try again (e.g., /home/aswin/Documents)[/yellow]\n")
+        console.print(f"[red]Folder not found:[/red] {folder}")
+        console.print("[yellow]Tip: Check the folder name and try again (e.g., /home/aswin/Documents)[/yellow]\n")
         return
 
-    # Find PDFs
     pdfs = [f for f in folder.iterdir() if f.suffix.lower() == ".pdf"]
     if not pdfs:
-        console.print("[yellow]⚠️ No PDF files found in this folder.[/yellow]\n")
+        console.print("[yellow]No PDF files found in this folder.[/yellow]\n")
         return
 
-    # Let user pick which files to merge
-    console.print("\n📂 [bold cyan]Select PDF(s) to merge:[/bold cyan]")
+    console.print("\n[bold cyan]Select PDF(s) to merge:[/bold cyan]")
     for i, pdf in enumerate(pdfs, start=1):
         console.print(f"{i}. {pdf.name}")
     console.print("\n[dim]Example: 1,3,5 or 2-6 or all[/dim]")
@@ -137,17 +111,16 @@ def merge_pdfs():
                     idx = int(p)
                     selected.append(pdfs[idx - 1])
     except Exception:
-        console.print("[red]⚠️ Invalid input, selecting all PDFs instead.[/red]")
+        console.print("[red]Invalid input, selecting all PDFs instead.[/red]")
         selected = pdfs
 
     if not selected:
-        console.print("[yellow]⚠️ No PDFs selected.[/yellow]")
+        console.print("[yellow]No PDFs selected.[/yellow]")
         return
 
     output_name = Prompt.ask("Enter output filename", default="merged.pdf")
     out = folder / output_name
 
-    # Merge the selected PDFs
     writer = PdfWriter()
     for f in selected:
         try:
@@ -156,20 +129,17 @@ def merge_pdfs():
                 writer.add_page(page)
             console.print(f"✅ Added {f.name}")
         except Exception as e:
-            console.print(f"[red]❌ Failed to add {f.name}: {e}[/red]")
+            console.print(f"[red]Failed to add {f.name}: {e}[/red]")
 
     # Save merged file
     with open(out, "wb") as f:
         writer.write(f)
-    console.print(f"\n🎉 Merged PDF saved: [green]{out}[/green]\n")
+    console.print(f"\nMerged PDF saved: [green]{out}[/green]\n")
 
 
 
-# ------------------------------------------------------------
-# ✂️ Split PDF
-# ------------------------------------------------------------
 def split_pdf():
-    console.print("\n✂️ [bold cyan]Split PDF[/bold cyan]")
+    console.print("\n[bold cyan]Split PDF[/bold cyan]")
     selected_files = select_file_from_folder(
         Path(Prompt.ask("Enter PDF file or folder", default=".")),
         [".pdf"],
@@ -182,7 +152,7 @@ def split_pdf():
         try:
             reader = PdfReader(file)
             total = len(reader.pages)
-            console.print(f"\n📘 {file.name} - Total Pages: {total}")
+            console.print(f"\n{file.name} - Total Pages: {total}")
             console.print("[dim]Example: 1-3,6-8 or 2,4,9[/dim]")
 
             ranges = Prompt.ask("Enter page ranges to extract", default=f"1-{total}").strip()
@@ -198,7 +168,7 @@ def split_pdf():
                     else:
                         page_numbers.add(int(part))
             except Exception:
-                console.print("[red]❌ Invalid range format. Example: 1-3,5,7-9[/red]")
+                console.print("[red]Invalid range format. Example: 1-3,5,7-9[/red]")
                 continue
 
             # Create a new PDF for selected pages
@@ -215,14 +185,11 @@ def split_pdf():
             console.print(f"✅ Split file created: [green]{out.name}[/green]\n")
 
         except Exception as e:
-            console.print(f"[red]❌ Failed to split {file.name}: {e}[/red]")
+            console.print(f"[red]Failed to split {file.name}: {e}[/red]")
 
 
-# ------------------------------------------------------------
-# 🧱 Word → PDF (with .doc support)
-# ------------------------------------------------------------
 def word_to_pdf():
-    console.print("\n🧱 [bold cyan]Word → PDF Converter[/bold cyan]")
+    console.print("\n[bold cyan]Word → PDF Converter[/bold cyan]")
     selected = select_file_from_folder(
         Path(Prompt.ask("Enter Word file or folder", default=".")),
         [".doc", ".docx"],
@@ -238,7 +205,7 @@ def word_to_pdf():
             if new_path:
                 file = new_path
             else:
-                console.print(f"[red]❌ Skipping {file.name} (conversion failed)[/red]")
+                console.print(f"[red]Skipping {file.name} (conversion failed)[/red]")
                 continue
 
         # Output PDF in the same folder as the Word file
@@ -249,9 +216,9 @@ def word_to_pdf():
             try:
                 from docx2pdf import convert
                 convert(str(file), str(output_path))
-                console.print(f"🎉 Saved [green]{output_path.name}[/green] in {file.parent}")
+                console.print(f"Saved [green]{output_path.name}[/green] in {file.parent}")
             except Exception as e:
-                console.print(f"[red]❌ Failed to convert {file.name}: {e}[/red]")
+                console.print(f"[red]Failed to convert {file.name}: {e}[/red]")
         else:
             # Linux / macOS → use LibreOffice headless mode
             try:
@@ -265,37 +232,34 @@ def word_to_pdf():
                     ],
                     check=True
                 )
-                console.print(f"🎉 Saved [green]{output_path.name}[/green] in {file.parent}")
+                console.print(f"Saved [green]{output_path.name}[/green] in {file.parent}")
             except Exception as e:
-                console.print(f"[red]❌ LibreOffice conversion failed for {file.name}: {e}[/red]")
+                console.print(f"[red]LibreOffice conversion failed for {file.name}: {e}[/red]")
 
-# ------------------------------------------------------------
-# 🧱 Image → PDF
-# ------------------------------------------------------------
 
 def image_to_pdf():
-    console.print("\n🖼 [bold cyan]Image → PDF Converter[/bold cyan]")
+    console.print("\n[bold cyan]Image → PDF Converter[/bold cyan]")
     path = Path(Prompt.ask("Enter image file or folder", default=".")).resolve()
 
     # If it's a single file
     if path.is_file():
         if path.suffix.lower() not in [".jpg", ".jpeg", ".png"]:
-            console.print("[red]❌ Not an image file[/red]")
+            console.print("[red]Not an image file[/red]")
             return
         image = Image.open(path).convert("RGB")
         out = path.with_suffix(".pdf")
         image.save(out)
-        console.print(f"🎉 Converted [green]{path.name}[/green] → [green]{out.name}[/green]\n")
+        console.print(f"Converted [green]{path.name}[/green] → [green]{out.name}[/green]\n")
         return
 
     # If it's a folder
     if path.is_dir():
         imgs = [f for f in path.iterdir() if f.suffix.lower() in [".jpg", ".jpeg", ".png"]]
         if not imgs:
-            console.print("[yellow]⚠️ No images found in this folder.[/yellow]")
+            console.print("[yellow]No images found in this folder.[/yellow]")
             return
 
-        console.print("\n📂 [bold cyan]Select images to include in PDF:[/bold cyan]")
+        console.print("\n[bold cyan]Select images to include in PDF:[/bold cyan]")
         for i, img in enumerate(imgs, start=1):
             console.print(f"{i}. {img.name}")
         console.print("\n[dim]Example: 1,3,5 or 2-6 or all[/dim]")
@@ -316,11 +280,11 @@ def image_to_pdf():
                         idx = int(p)
                         selected.append(imgs[idx - 1])
         except Exception:
-            console.print("[red]⚠️ Invalid input, selecting all images instead.[/red]")
+            console.print("[red]Invalid input, selecting all images instead.[/red]")
             selected = imgs
 
         if not selected:
-            console.print("[yellow]⚠️ No images selected.[/yellow]")
+            console.print("[yellow]No images selected.[/yellow]")
             return
 
         # Open and merge selected images
@@ -329,18 +293,15 @@ def image_to_pdf():
         out = path / output_name
         images[0].save(out, save_all=True, append_images=images[1:])
 
-        console.print(f"🎉 PDF created: [green]{out}[/green]\n")
+        console.print(f"PDF created: [green]{out}[/green]\n")
 
 
-# ------------------------------------------------------------
-# 📚 Merge Word Files (with .doc support)
-# ------------------------------------------------------------
 def merge_word():
-    console.print("\n📚 [bold cyan]Merge Word Files[/bold cyan]")
+    console.print("\n[bold cyan]Merge Word Files[/bold cyan]")
     folder = Path(Prompt.ask("Enter folder containing Word files", default=".")).resolve()
     docs = [f for f in folder.iterdir() if f.suffix.lower() in [".doc", ".docx"]]
     if not docs:
-        console.print("[yellow]⚠️ No Word files found.[/yellow]")
+        console.print("[yellow]No Word files found.[/yellow]")
         return
 
     # Convert any .doc files to .docx first
@@ -354,7 +315,7 @@ def merge_word():
             converted_docs.append(f)
 
     if not converted_docs:
-        console.print("[red]❌ No valid Word files to merge.[/red]")
+        console.print("[red]No valid Word files to merge.[/red]")
         return
 
     merged = Document(converted_docs[0])
@@ -364,18 +325,16 @@ def merge_word():
             composer.append(Document(f))
             console.print(f"✅ Added {f.name}")
         except Exception as e:
-            console.print(f"[red]❌ Failed to merge {f.name}: {e}[/red]")
+            console.print(f"[red]Failed to merge {f.name}: {e}[/red]")
 
     out = folder / "merged.docx"
     composer.save(out)
-    console.print(f"🎉 Merged Word file saved: [green]{out}[/green]\n")
+    console.print(f"Merged Word file saved: [green]{out}[/green]\n")
 
 
-# ------------------------------------------------------------
-# ✂️ Split Word (Safe Version)
-# ------------------------------------------------------------
+
 def split_word():
-    console.print("\n✂️ [bold cyan]Split Word File[/bold cyan]")
+    console.print("\n[bold cyan]Split Word File[/bold cyan]")
     selected_files = select_file_from_folder(
         Path(Prompt.ask("Enter Word file or folder", default=".")),
         [".docx"],
@@ -385,18 +344,18 @@ def split_word():
         return
 
     for file in selected_files:
-        console.print(f"\n📄 Processing: [green]{file.name}[/green]")
+        console.print(f"\nProcessing: [green]{file.name}[/green]")
         try:
             doc = Document(file)
             if not hasattr(doc, "paragraphs"):
                 raise ValueError("File opened but not a valid Word document.")
         except Exception as e:
-            console.print(f"[red]❌ Failed to open {file.name}: {e}[/red]")
+            console.print(f"[red]Failed to open {file.name}: {e}[/red]")
             continue
 
         paras = doc.paragraphs
         if not paras:
-            console.print(f"[yellow]⚠️ {file.name} has no paragraphs to split.[/yellow]")
+            console.print(f"[yellow] {file.name} has no paragraphs to split.[/yellow]")
             continue
 
         chunk = int(Prompt.ask("Split after how many paragraphs?", default="5"))
@@ -415,11 +374,8 @@ def split_word():
         console.print(f"🎉 Split files saved in [green]{out_dir}[/green]\n")
 
 
-# ------------------------------------------------------------
-# 🔐 Protect PDF
-# ------------------------------------------------------------
 def protect_pdf():
-    console.print("\n🔐 [bold cyan]Protect PDF File[/bold cyan]")
+    console.print("\n[bold cyan]Protect PDF File[/bold cyan]")
     selected_files = select_file_from_folder(Path(Prompt.ask("Enter PDF file or folder", default=".")), [".pdf"], "PDF")
     if not selected_files:
         return
@@ -437,14 +393,11 @@ def protect_pdf():
             writer.write(f)
         console.print(f"✅ Protected: [green]{out.name}[/green]")
 
-    console.print(f"\n🎉 Protected {len(selected_files)} file(s) successfully!\n")
+    console.print(f"\nProtected {len(selected_files)} file(s) successfully!\n")
 
 
-# ------------------------------------------------------------
-# 🔓 Unlock PDF
-# ------------------------------------------------------------
 def unlock_pdf():
-    console.print("\n🔓 [bold cyan]Unlock PDF File (remove password)[/bold cyan]")
+    console.print("\n[bold cyan]Unlock PDF File (remove password)[/bold cyan]")
     selected_files = select_file_from_folder(
         Path(Prompt.ask("Enter PDF file or folder", default=".")),
         [".pdf"],
@@ -460,11 +413,11 @@ def unlock_pdf():
         try:
             reader = PdfReader(file)
         except Exception as e:
-            console.print(f"[red]❌ Could not open {file.name}: {e}[/red]")
+            console.print(f"[red]Could not open {file.name}: {e}[/red]")
             continue
 
         if not getattr(reader, "is_encrypted", False):
-            console.print(f"[yellow]⚠️ {file.name} is not encrypted — skipping.[/yellow]")
+            console.print(f"[yellow]{file.name} is not encrypted — skipping.[/yellow]")
             continue
 
         try:
@@ -476,7 +429,7 @@ def unlock_pdf():
                 can_read = False
 
             if not can_read:
-                console.print(f"[red]❌ Wrong password for {file.name} — skipping.[/red]")
+                console.print(f"[red]Wrong password for {file.name} — skipping.[/red]")
                 continue
 
             writer = PdfWriter()
@@ -490,18 +443,15 @@ def unlock_pdf():
             unlocked_count += 1
 
         except Exception as e:
-            console.print(f"[red]❌ Failed to unlock {file.name}: {e}[/red]")
+            console.print(f"[red]Failed to unlock {file.name}: {e}[/red]")
 
-    console.print(f"\n🎉 Done — unlocked {unlocked_count} file(s).\n")
+    console.print(f"\nDone — unlocked {unlocked_count} file(s).\n")
 
 
-# ------------------------------------------------------------
-# 🧭 Menu
-# ------------------------------------------------------------
 def pdf_menu():
     while True:
         console.print("""
-📄 [bold cyan]PDF & Word Automation Tools[/bold cyan]
+[bold cyan]PDF & Word Automation Tools[/bold cyan]
 1. Merge PDFs
 2. Split PDF
 3. Word → PDF
