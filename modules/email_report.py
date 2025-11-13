@@ -1,10 +1,3 @@
-"""
-📧 Smart Terminal Assistant - Email Report Module (Fixed Sender)
----------------------------------------------------------------
-Now automatically uses a preset sender email + app password.
-Only asks for receiver email when sending.
-"""
-
 import os
 import smtplib
 import pandas as pd
@@ -18,21 +11,15 @@ from rich.prompt import Prompt
 
 console = Console()
 
-# ------------------------------------------------------------
-# ✉️ CONFIGURATION - Set your Gmail credentials here once
-# ------------------------------------------------------------
-SENDER_EMAIL = "smartterminalst@gmail.com"           # 👉 Replace with your Gmail
-SENDER_PASSWORD = "ynqd cdus bshd npbg"     # 👉 Replace with your 16-digit app password
+SENDER_EMAIL = "smartterminalst@gmail.com"      
+SENDER_PASSWORD = "ynqd cdus bshd npbg"    
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
 
 
-# ------------------------------------------------------------
-# 🧾 Generate CSV Report (optional)
-# ------------------------------------------------------------
 def generate_report(folder: Path) -> Path:
     """Create a CSV report listing all files in the folder."""
-    console.print(f"\n🧾 [bold cyan]Generating report for {folder}...[/bold cyan]")
+    console.print(f"\n[bold cyan]Generating report for {folder}...[/bold cyan]")
     data = []
 
     for file in folder.iterdir():
@@ -45,7 +32,7 @@ def generate_report(folder: Path) -> Path:
             data.append(info)
 
     if not data:
-        console.print("[yellow]⚠️ No files found in this folder.[/yellow]")
+        console.print("[yellow]No files found in this folder.[/yellow]")
         return None
 
     df = pd.DataFrame(data)
@@ -55,17 +42,14 @@ def generate_report(folder: Path) -> Path:
     return report_path
 
 
-# ------------------------------------------------------------
-# 📂 Let user choose specific files
-# ------------------------------------------------------------
 def choose_files(folder: Path):
     """Display all files and let user select which ones to email."""
     files = [f for f in folder.iterdir() if f.is_file()]
     if not files:
-        console.print("[yellow]⚠️ No files found in this folder.[/yellow]")
+        console.print("[yellow]No files found in this folder.[/yellow]")
         return []
 
-    console.print("\n📂 [bold cyan]Files in folder:[/bold cyan]")
+    console.print("\n[bold cyan]Files in folder:[/bold cyan]")
     for i, f in enumerate(files, start=1):
         console.print(f"{i}. {f.name}")
 
@@ -86,15 +70,11 @@ def choose_files(folder: Path):
                 idx = int(p)
                 selected.append(files[idx - 1])
     except Exception:
-        console.print("[red]⚠️ Invalid input. Selecting all files instead.[/red]")
+        console.print("[red]Invalid input. Selecting all files instead.[/red]")
         selected = files
 
     return selected
 
-
-# ------------------------------------------------------------
-# ✉️ Send selected files as attachments
-# ------------------------------------------------------------
 def send_selected_files(files, receiver_email):
     """Send multiple selected files as attachments."""
     if not files:
@@ -102,7 +82,7 @@ def send_selected_files(files, receiver_email):
         return
 
     try:
-        console.print(f"\n📧 [bold cyan]Preparing to send {len(files)} file(s)...[/bold cyan]")
+        console.print(f"\n[bold cyan]Preparing to send {len(files)} file(s)...[/bold cyan]")
         msg = MIMEMultipart()
         msg["From"] = SENDER_EMAIL
         msg["To"] = receiver_email
@@ -125,23 +105,20 @@ def send_selected_files(files, receiver_email):
             server.login(SENDER_EMAIL, SENDER_PASSWORD)
             server.send_message(msg)
 
-        console.print(f"\n🎉 [bold green]Email sent successfully to {receiver_email}[/bold green]\n")
+        console.print(f"\n[bold green]Email sent successfully to {receiver_email}[/bold green]\n")
 
     except smtplib.SMTPAuthenticationError:
-        console.print("[red]❌ Authentication failed.[/red]")
+        console.print("[red]Authentication failed.[/red]")
         console.print("[dim]Double-check your Gmail App Password or replace it in the config section.[/dim]")
     except Exception as e:
-        console.print(f"[red]❌ Failed to send email: {e}[/red]")
+        console.print(f"[red]Failed to send email: {e}[/red]")
 
 
-# ------------------------------------------------------------
-# 📧 Email Report Menu
-# ------------------------------------------------------------
 def email_menu():
     """Menu for generating reports and sending files."""
     while True:
         console.print("""
-📧 [bold cyan]Email Report Generator[/bold cyan]
+[bold cyan]Email Report Generator[/bold cyan]
 1. Generate CSV Report
 2. Send Selected Files by Email
 3. Back to Main Menu
@@ -154,12 +131,12 @@ def email_menu():
             if folder.exists():
                 generate_report(folder)
             else:
-                console.print("[red]❌ Folder not found.[/red]")
+                console.print("[red]Folder not found.[/red]")
 
         elif choice == "2":
             folder = Path(Prompt.ask("Enter folder path", default=".")).resolve()
             if not folder.exists():
-                console.print("[red]❌ Folder not found.[/red]")
+                console.print("[red]Folder not found.[/red]")
                 continue
 
             files = choose_files(folder)
