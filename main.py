@@ -1,15 +1,3 @@
-"""
-💻 Smart Terminal Automation Assistant (Offline Version)
---------------------------------------------------------
-A command-line automation tool built with Python.
-Performs real-world tasks like:
- - PDF Automation (merge/split)
- - File Organizer
- - Email Report Generator
- - Voice Assistant Mode (new!)
-All offline, no API keys needed.
-"""
-
 import os
 import sys
 from rich.console import Console
@@ -37,7 +25,7 @@ def main_menu():
 1. PDF & Word Tools
 2. File Organizer
 3. Email Report Generator
-4. 🎙️ Voice Assistant Mode
+4. Voice Assistant Mode
 5. Exit
         """)
 
@@ -53,7 +41,7 @@ def main_menu():
             console.print("\n🎤 [bold cyan]Starting Voice Assistant Mode...[/bold cyan]\n")
             voice_assistant.start_voice_assistant()
         elif choice == "5":
-            console.print("\n👋 [bold cyan]Goodbye![/bold cyan]")
+            console.print("\n[bold cyan]Goodbye![/bold cyan]")
             sys.exit(0)
 
 
